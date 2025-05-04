@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useTransition } from 'react';
+import React, { useState, useEffect, useTransition, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth'; // Corrected extension
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'; // Added CardDescription
@@ -26,9 +26,10 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { ShieldCheck, ShieldOff, UserCog, Trash2, Ban, CheckCircle, Plus, KeyRound } from 'lucide-react'; // Icons
+import { ShieldCheck, ShieldOff, UserCog, Trash2, Ban, CheckCircle, Plus, KeyRound, Loader2, AlertCircle } from 'lucide-react'; // Icons + Loader
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'; // Dropdown for actions
 import { UserPermissionsDialog } from '@/components/admin/user-permissions-dialog'; // Import the new dialog component
+import { Alert } from '@/components/ui/alert'; // Import Alert
 
 
 // Define a type for the user data we expect from the action
@@ -56,6 +57,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<DisplayUser[]>([]);
   const [listLoading, setListLoading] = useState(true);
   const [isPending, startTransition] = useTransition();
+  const [listError, setListError] = useState<string | null>(null); // State for list errors
   // State for managing the permissions dialog
   const [isPermissionsDialogOpen, setIsPermissionsDialogOpen] = useState(false);
   const [userToEditPermissions, setUserToEditPermissions] = useState<UserBeingEdited | null>(null);
@@ -69,22 +71,39 @@ export default function AdminPage() {
   }, [currentUser, authLoading, router]);
 
   // Function to fetch users
-  const fetchUsers = React.useCallback(async () => { // Wrap in useCallback
+  const fetchUsers = useCallback(async () => {
       setListLoading(true);
-      const result = await listUsersAction();
-      if (result.success && result.users) {
-        setUsers(result.users);
-      } else {
-        toast({
-          title: "Erreur",
-          description: result.message,
-          variant: "destructive",
-        });
-        console.error("Failed to fetch users:", result.message);
+      setListError(null); // Reset error state
+      try {
+         const result = await listUsersAction();
+         if (result.success && result.users) {
+           setUsers(result.users);
+         } else {
+            const errorMessage = result.message || "Erreur inconnue lors de la récupération des utilisateurs.";
+            setListError(`Erreur: ${errorMessage}`); // Set detailed error message
+            toast({
+                title: "Erreur",
+                description: errorMessage,
+                variant: "destructive",
+            });
+            console.error("AdminPage: Failed to fetch users:", errorMessage);
+            setUsers([]); // Ensure users list is empty on failure
+         }
+      } catch (error: any) {
+         // Catch errors potentially thrown by getAdminAuth if SDK init fails
+         const errorMessage = error.message || "Une erreur serveur est survenue lors de la récupération des utilisateurs.";
+         setListError(`Erreur critique: Impossible d'initialiser Firebase Admin SDK. Vérifiez les logs du serveur. (${errorMessage})`);
+         toast({
+             title: "Erreur Critique",
+             description: `Impossible de charger la liste des utilisateurs. Problème de configuration serveur. Détails: ${errorMessage}`,
+             variant: "destructive",
+         });
+         console.error("AdminPage: Critical error fetching users (likely SDK init failure):", error);
+         setUsers([]);
+      } finally {
+         setListLoading(false);
       }
-      setListLoading(false);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [toast]); // Add toast as dependency
+  }, [toast]);
 
 
   // Fetch users when the component mounts and user is confirmed as admin
@@ -93,7 +112,6 @@ export default function AdminPage() {
     if (!authLoading && currentUser?.role === 'admin') {
         fetchUsers();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser, authLoading, fetchUsers]); // Include fetchUsers in dependency array
 
 
@@ -184,6 +202,13 @@ export default function AdminPage() {
                         <Skeleton className="h-12 w-full" />
                         <Skeleton className="h-12 w-full" />
                     </div>
+                ) : listError ? ( // Display error message if loading failed
+                    <Alert variant="destructive" className="mt-4">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                           {listError} <Button variant="link" onClick={fetchUsers} className="p-0 h-auto ml-2">Réessayer</Button>
+                        </AlertDescription>
+                    </Alert>
                 ) : (
                     <div className="overflow-x-auto">
                         <Table>
@@ -205,7 +230,7 @@ export default function AdminPage() {
                                     <TableRow key={usr.uid} className={usr.disabled ? 'opacity-60' : ''}>
                                         <TableCell className="font-medium">{usr.email || 'N/A'}</TableCell>
                                         <TableCell>
-                                            {/* Display Admin badge if user is admin, User otherwise */}
+                                            {/* Display Admin badge if user is admin */}
                                             {usr.isAdmin || (process.env.NEXT_PUBLIC_ADMIN_UID && usr.uid === process.env.NEXT_PUBLIC_ADMIN_UID) ? (
                                                 <Badge variant="secondary"><ShieldCheck className="mr-1 h-3 w-3" /> Admin</Badge>
                                             ) : (
@@ -240,7 +265,7 @@ export default function AdminPage() {
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
                                                         <Button variant="ghost" size="icon" disabled={isPending}>
-                                                            <UserCog className="h-4 w-4" />
+                                                            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserCog className="h-4 w-4" />}
                                                             <span className="sr-only">Actions</span>
                                                         </Button>
                                                     </DropdownMenuTrigger>
@@ -339,7 +364,7 @@ export default function AdminPage() {
                                                                     </AlertDialogHeader>
                                                                     <AlertDialogFooter>
                                                                         <AlertDialogCancel disabled={isPending}>Annuler</AlertDialogCancel>
-                                                                        {/* Replace AlertDialogAction with Button for destructive variant */}
+                                                                        {/* Use Button component for destructive action */}
                                                                         <Button
                                                                             variant="destructive"
                                                                             onClick={() => handleToggleStatus(usr.uid, true)}
@@ -368,7 +393,7 @@ export default function AdminPage() {
                                                                 </AlertDialogHeader>
                                                                 <AlertDialogFooter>
                                                                     <AlertDialogCancel disabled={isPending}>Annuler</AlertDialogCancel>
-                                                                    {/* Replace AlertDialogAction with Button for destructive variant */}
+                                                                     {/* Use Button component for destructive action */}
                                                                     <Button
                                                                         variant="destructive"
                                                                         onClick={() => handleDeleteUser(usr.uid)}

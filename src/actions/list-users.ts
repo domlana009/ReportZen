@@ -20,26 +20,24 @@ interface ListUsersResult {
 }
 
 export async function listUsersAction(): Promise<ListUsersResult> {
-   const adminAuth = getAdminAuth(); // Get the admin auth instance
-
-  // --- Authentication/Authorization Check ---
-  // Similar to create-user action, ensure the caller is an admin.
-  // This is crucial for security. For now, we assume page-level protection.
-  // In a real app, implement robust server-side auth checks here.
-  // --- End Auth Check ---
-
   try {
+     const adminAuth = getAdminAuth(); // Get the admin auth instance inside try block
+
+    // --- Authentication/Authorization Check ---
+    // Ensure the caller is an admin. This logic should be robust.
+    // Assuming page-level protection or token verification happens before calling this action.
+    // --- End Auth Check ---
+
     const listUsersResult = await adminAuth.listUsers(1000); // List up to 1000 users
 
     const users = listUsersResult.users.map((userRecord: UserRecord) => {
         // Check for the admin custom claim
-        const isAdmin = !!userRecord.customClaims?.admin; // Check if customClaims exist and admin is true
+        const isAdmin = !!userRecord.customClaims?.admin || (process.env.NEXT_PUBLIC_ADMIN_UID && userRecord.uid === process.env.NEXT_PUBLIC_ADMIN_UID);
 
         // Get allowed sections claim, default to empty array if missing or invalid
         const allowedSections = Array.isArray(userRecord.customClaims?.allowedSections)
                                   ? userRecord.customClaims?.allowedSections as string[]
                                   : [];
-
 
         return {
             uid: userRecord.uid,
@@ -55,14 +53,23 @@ export async function listUsersAction(): Promise<ListUsersResult> {
     // Optionally sort users, e.g., by creation time or email
     users.sort((a, b) => new Date(b.creationTime).getTime() - new Date(a.creationTime).getTime());
 
-
     return {
       success: true,
       message: `Successfully fetched ${users.length} users.`,
       users: users,
     };
   } catch (error: any) {
+    // Catch errors from getAdminAuth (SDK init failure) or adminAuth.listUsers()
     console.error('Error listing users:', error);
-    return { success: false, message: `Erreur lors de la récupération des utilisateurs: ${error.message}` };
+    let errorMessage = `Erreur lors de la récupération des utilisateurs: ${error.message}`;
+     // Check if the error message indicates an SDK initialization failure from the getter
+    if (error.message?.includes("Firebase Admin SDK access failed")) {
+        errorMessage = `Erreur critique: Impossible d'initialiser Firebase Admin SDK. Vérifiez les logs du serveur. (${error.message})`;
+    }
+
+    return {
+        success: false,
+        message: errorMessage,
+    };
   }
 }
