@@ -85,7 +85,7 @@ const AlertDialogTitle = React.forwardRef<
 ))
 AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
 
-const AlertDialogDescription = React.forwardRef<
+const AlertDialogDesc = React.forwardRef< // Renamed component
   React.ElementRef<typeof AlertDialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
@@ -95,8 +95,8 @@ const AlertDialogDescription = React.forwardRef<
     {...props}
   />
 ))
-AlertDialogDescription.displayName =
-  AlertDialogPrimitive.Description.displayName
+AlertDialogDesc.displayName =
+  AlertDialogPrimitive.Description.displayName // Keep original display name
 
 const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
@@ -135,7 +135,7 @@ export {
   AlertDialogHeader,
   AlertDialogFooter,
   AlertDialogTitle,
-  AlertDialogDescription,
+  AlertDialogDesc as AlertDialogDescription, // Export renamed component as AlertDialogDescription
   AlertDialogAction,
   AlertDialogCancel,
 }

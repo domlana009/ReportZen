@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useTransition, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth'; // Corrected extension
 import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'; // Added CardDescription
+import { Card, CardContent, CardHeader, CardTitle, CardDescription as CardDesc } from '@/components/ui/card'; // Renamed CardDescription to avoid conflict
 import { Button, buttonVariants } from '@/components/ui/button'; // Import buttonVariants
 import Link from 'next/link';
 import { listUsersAction } from '@/actions/list-users';
@@ -20,7 +20,7 @@ import {
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
-    AlertDialogDescription,
+    AlertDialogDescription, // Renamed AlertDialogDescription to avoid conflict
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
@@ -29,7 +29,7 @@ import {
 import { ShieldCheck, ShieldOff, UserCog, Trash2, Ban, CheckCircle, Plus, KeyRound, Loader2, AlertCircle } from 'lucide-react'; // Icons + Loader
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'; // Dropdown for actions
 import { UserPermissionsDialog } from '@/components/admin/user-permissions-dialog'; // Import the new dialog component
-import { Alert } from '@/components/ui/alert'; // Import Alert
+import { Alert, AlertDescription } from '@/components/ui/alert'; // Import Alert and AlertDescription
 
 
 // Define a type for the user data we expect from the action
@@ -86,7 +86,7 @@ export default function AdminPage() {
                 description: errorMessage,
                 variant: "destructive",
             });
-            console.error("AdminPage: Failed to fetch users:", errorMessage);
+            console.error("AdminPage: Failed to fetch users:", result.message);
             setUsers([]); // Ensure users list is empty on failure
          }
       } catch (error: any) {
@@ -193,7 +193,7 @@ export default function AdminPage() {
         <Card>
             <CardHeader>
                 <CardTitle>Gestion des Utilisateurs</CardTitle>
-                <CardDescription>Gérer les utilisateurs, leurs rôles, leur statut et leurs permissions.</CardDescription>
+                <CardDesc>Gérer les utilisateurs, leurs rôles, leur statut et leurs permissions.</CardDesc> {/* Use renamed CardDesc */}
             </CardHeader>
             <CardContent>
                 {listLoading ? (
@@ -289,7 +289,7 @@ export default function AdminPage() {
                                                                 <AlertDialogContent>
                                                                     <AlertDialogHeader>
                                                                         <AlertDialogTitle>Retirer le Rôle Admin?</AlertDialogTitle>
-                                                                        <AlertDialogDescription>
+                                                                        <AlertDialogDescription> {/* Use renamed AlertDialogDescription */}
                                                                             Confirmez-vous la révocation des privilèges admin pour {usr.email || usr.uid}?
                                                                         </AlertDialogDescription>
                                                                     </AlertDialogHeader>
@@ -311,7 +311,7 @@ export default function AdminPage() {
                                                                  <AlertDialogContent>
                                                                     <AlertDialogHeader>
                                                                         <AlertDialogTitle>Définir comme Admin?</AlertDialogTitle>
-                                                                        <AlertDialogDescription>
+                                                                        <AlertDialogDescription> {/* Use renamed AlertDialogDescription */}
                                                                             Confirmez-vous l'attribution des privilèges admin à {usr.email || usr.uid}?
                                                                         </AlertDialogDescription>
                                                                     </AlertDialogHeader>
@@ -336,7 +336,7 @@ export default function AdminPage() {
                                                                 <AlertDialogContent>
                                                                     <AlertDialogHeader>
                                                                         <AlertDialogTitle>Activer l'Utilisateur?</AlertDialogTitle>
-                                                                        <AlertDialogDescription>
+                                                                        <AlertDialogDescription> {/* Use renamed AlertDialogDescription */}
                                                                             Confirmez-vous l'activation du compte pour {usr.email || usr.uid}?
                                                                         </AlertDialogDescription>
                                                                     </AlertDialogHeader>
@@ -358,7 +358,7 @@ export default function AdminPage() {
                                                                  <AlertDialogContent>
                                                                     <AlertDialogHeader>
                                                                         <AlertDialogTitle>Désactiver l'Utilisateur?</AlertDialogTitle>
-                                                                        <AlertDialogDescription>
+                                                                        <AlertDialogDescription> {/* Use renamed AlertDialogDescription */}
                                                                              Confirmez-vous la désactivation du compte pour {usr.email || usr.uid}? L'utilisateur ne pourra plus se connecter.
                                                                         </AlertDialogDescription>
                                                                     </AlertDialogHeader>
@@ -387,7 +387,7 @@ export default function AdminPage() {
                                                             <AlertDialogContent>
                                                                 <AlertDialogHeader>
                                                                     <AlertDialogTitle>Supprimer l'Utilisateur?</AlertDialogTitle>
-                                                                    <AlertDialogDescription>
+                                                                    <AlertDialogDescription> {/* Use renamed AlertDialogDescription */}
                                                                         Cette action est irréversible. Confirmez-vous la suppression définitive de {usr.email || usr.uid}?
                                                                     </AlertDialogDescription>
                                                                 </AlertDialogHeader>

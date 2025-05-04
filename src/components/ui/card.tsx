@@ -44,7 +44,7 @@ const CardTitle = React.forwardRef<
 ))
 CardTitle.displayName = "CardTitle"
 
-const CardDescription = React.forwardRef<
+const CardDesc = React.forwardRef< // Renamed export
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -54,7 +54,7 @@ const CardDescription = React.forwardRef<
     {...props}
   />
 ))
-CardDescription.displayName = "CardDescription"
+CardDesc.displayName = "CardDescription" // Keep original display name for consistency
 
 const CardContent = React.forwardRef<
   HTMLDivElement,
@@ -76,4 +76,4 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export { Card, CardHeader, CardFooter, CardTitle, CardDesc as CardDescription, CardContent } // Export renamed component as CardDescription
