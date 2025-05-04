@@ -1,59 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# local env files
-.env.local
-.env.*.local
-!.env.example
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# Firebase Admin SDK Key File
-# IMPORTANT: Add the specific filename of your service account key file here
-reportzen-mixd3-firebase-adminsdk-fbsvc-f006f10e8d.json
-google-services.json
-
-# Editor directories and files
-.idea
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-*.sublime-workspace
-
-# macOS file attributes
-._*
-
-# Optional: lock files (package-lock.json, yarn.lock, pnpm-lock.yaml)
-# Often committed, but can be ignored in certain workflows
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
+diff
+--- a/.gitignore
++++ b/.gitignore
+@@ -0,0 +1,1 @@
++.env
+node_modules
