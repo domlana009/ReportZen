@@ -1,0 +1,8 @@
+{
+  "android": {
+    "package": "com.anonymous.nextn"
+  },
+  "ios": {
+    "bundleIdentifier": "com.anonymous.nextn"
+  }
+}

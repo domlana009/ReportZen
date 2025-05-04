@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/hooks/use-toast"; // Import useToast
 
 export default function LoginPage() {
-  const [userEmail, setUserEmail] = useState(''); // Changed from 'email' to avoid confusion
+  const [userEmail, setUserEmail] = useState(''); // State for user input (email format)
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -51,7 +51,7 @@ export default function LoginPage() {
         // with the correct password (e.g., 123456).
         errorMessage = "Identifiants invalides. Vérifiez votre email et mot de passe, ou assurez-vous que l'utilisateur existe."; // Updated message for invalid credential
       } else if (err.code === 'auth/invalid-email') {
-        errorMessage = "Format d'email invalide."; // Changed label from User to Email in logic
+        errorMessage = "Format d'email invalide.";
       } else if (err.code === 'auth/invalid-api-key' || err.code === 'auth/api-key-not-valid.-please-pass-a-valid-api-key.') {
          errorMessage = "Erreur de configuration : Clé API Firebase invalide.";
       } else if (err.code === 'auth/missing-password') {
@@ -73,11 +73,12 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Connexion</CardTitle>
-          <CardDescription className="text-center">Connectez-vous à votre compte R0</CardDescription> {/* Updated description */}
+          <CardDescription className="text-center">Connectez-vous à votre compte R0</CardDescription>
         </CardHeader>
         <form onSubmit={handleLogin}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
+              {/* Changed Label text back to User as requested */}
               <Label htmlFor="email">User</Label>
               <Input
                 id="email"
@@ -112,4 +113,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
