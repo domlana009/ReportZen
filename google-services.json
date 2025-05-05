@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "228045181413",
+    "firebase_url": "https://reportzen-mixd3-default-rtdb.firebaseio.com",
+    "project_id": "reportzen-mixd3",
+    "storage_bucket": "reportzen-mixd3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:228045181413:android:aaff7d13b15c261ac35f0c",
+        "android_client_info": {
+          "package_name": "com.company.ReportZen"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqRa0mEsvNDX17JGd8NKgC-BMUPYGLnCY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
